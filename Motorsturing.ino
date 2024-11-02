@@ -141,4 +141,5 @@ double meetPotRad()
     int val = analogRead(POTPIN);
     int valGraden = map(val, 0, 1023, 0, 360);
     double valRad = valGraden * (PI / 180);
+    return valRad;
 }
