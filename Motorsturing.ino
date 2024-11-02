@@ -69,8 +69,8 @@ void loop()
             while (!sensor2) {}
             unsigned long tStop = millis();
             unsigned int tVal = tStop - tStart;
-            lcdPrint("f1: " + String(berekeningFl()), 0, true);
-            lcdPrint("fVal: " + String(berekeningFd(tVal)), 1, false);
+            lcdPrint("Fl: " + String(berekeningFl()), 0, true);
+            lcdPrint("Fd: " + String(berekeningFd(tVal)), 1, false);
             delay(5000);
         }
     }
