@@ -27,11 +27,12 @@
 // Library voor LCD
 LiquidCrystal_I2C lcd(0x27, 16, 2); // adres 0x27, 16 kolommen, 2 rijen
 
-//Zorgt ervoor dat "Klik op RESET" maar 1 keer wordt geprint
+// Zorgt ervoor dat "Klik op RESET" maar 1 keer wordt geprint
 bool resetBericht;
 
 void setup()
 {
+    // Start de seriële monitor en zet de pinmode van alle pins
     Serial.begin(9600);
     pinMode(PWMPIN, OUTPUT);
     pinMode(LPIN, OUTPUT);
@@ -54,10 +55,10 @@ void loop()
 {
     if (digitalRead(SWITCH1PIN))
     {
-        lcdPrint("Druk op START", 0, true);
+        displayOnLcd("Druk op START");
         resetBericht = false;
         while (!start);
-        lcdPrint("START gedrukt", 0, true);
+        displayOnLcd("START gedrukt");
         traagOmhoog();
         while (start && !sensor1 && !switch2) {}
         stop();
@@ -68,15 +69,17 @@ void loop()
             while (!sensor2);
             unsigned long tStop = millis();
             unsigned int tVal = tStop - tStart;
-            lcdPrint("Fl: " + String(berekeningFl()), 0, true);
-            lcdPrint("Fd: " + String(berekeningFd(tVal)), 1, false);
+            displayOnLcd("Fl: " + String(berekeningFl()));
+            lcd.clear();
+            lcd.setCursor(1,0);
+            lcd.print("Fd: " + String(berekeningFd(tVal)));
             delay(5000);
         }
     }
     else if (!resetBericht)
     {
         resetBericht = true;
-        lcdPrint("Klik op RESET", 0, true);
+        displayOnLcd("Klik op RESET");
     }
     else if (reset)
     {
@@ -111,11 +114,11 @@ void resetFunc()
     }
 }
 
-void lcdPrint(const String &text, const int rij, const bool clear)
+//Functie die automatisch de LCD eerst leegmaakt, zorgt ddt de cursor op de juist positie staat en dan de tekst print
+void displayOnLcd(const String &text)
 {
-    if (clear)
-        lcd.clear();
-    lcd.setCursor(rij, 0);
+    lcd.clear();
+    lcd.setCursor(0, 0);
     lcd.print(text);
 }
 
@@ -130,6 +133,7 @@ float berekeningFd(long tVal)
     return (sin(hoekRad)-2*plankLengte/(9.81*tVal*tVal))/cos(hoekRad);
 }
 
+// Meet de potentiometer en geeft de radialen terug
 float meetPotRad()
 {
     int potWaarde = analogRead(POTPIN);
