@@ -2,7 +2,6 @@
 //
 
 #include <LiquidCrystal_I2C.h>
-
 #define PWMPIN 3
 #define LPIN 4
 #define RPIN 5
@@ -57,7 +56,7 @@ void loop()
     {
         lcdPrint("Druk op START", 0, true);
         resetBericht = false;
-        while (!start) {}
+        while (!start);
         lcdPrint("START gedrukt", 0, true);
         traagOmhoog();
         while (start && !sensor1 && !switch2) {}
@@ -66,7 +65,7 @@ void loop()
         if (start && !switch2)
         {
             unsigned long tStart = millis();
-            while (!sensor2) {}
+            while (!sensor2);
             unsigned long tStop = millis();
             unsigned int tVal = tStop - tStart;
             lcdPrint("Fl: " + String(berekeningFl()), 0, true);
@@ -120,26 +119,21 @@ void lcdPrint(const String &text, const int rij, const bool clear)
     lcd.print(text);
 }
 
-double berekeningFl()
+float berekeningFl()
 {
-    double rad = meetPotRad();
-    return tan(rad);
+    return tan(meetPotRad());
 }
 
-double berekeningFd(long tVal)
+float berekeningFd(long tVal)
 {
-    double rad = meetPotRad();
-    int lengte = plankLengte * 2;
-    double breukKlein = lengte/9.81 * tVal * tVal;
-    double breukTeller = sin(rad) - breukKlein;
-    double breukGroot = breukTeller / cos(rad);
-    return breukGroot;
+    float hoekRad = meetPotRad();
+    return (sin(hoekRad)-2*plankLengte/(9.81*tVal*tVal))/cos(hoekRad);
 }
 
-double meetPotRad()
+float meetPotRad()
 {
-    int val = analogRead(POTPIN);
-    int valGraden = map(val, 0, 1023, 0, 360);
-    double valRad = valGraden * (PI / 180);
-    return valRad;
+    int potWaarde = analogRead(POTPIN);
+    float waardeGrad = map(potWaarde, 0, 1023, 0, 360);
+    float waardeRad = waardeGrad * (PI / 180);
+    return waardeRad;
 }

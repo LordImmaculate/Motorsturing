@@ -7,31 +7,21 @@
 #define LPIN 4
 #define RPIN 5
 
-#define LASERDICHT 13
-#define LASERVER 12
-#define MICROSWITCHONDER 11
-#define MICROSWITCHBOVEN 10
-#define STARTKNOP 9
-#define RESETKNOP 8
-
 void setup()
 { 
   Serial.begin(9600);
   pinMode(PWMPIN, OUTPUT);
   pinMode(LPIN, OUTPUT);
   pinMode(RPIN, OUTPUT);
-  
-  pinMode(LASERDICHT, INPUT);
-  pinMode(LASERVER, INPUT);
-  pinMode(MICROSWITCHONDER, INPUT);
-  pinMode(MICROSWITCHBOVEN, INPUT);
-  pinMode(STARTKNOP, INPUT);
-  pinMode(RESETKNOP, INPUT);
 }
 
 void loop()
 {
-  
+  digitalWrite(PWMPIN, HIGH);
+  motorSturen(true);
+  delay(5000);
+  motorSturen(false);
+  delay(5000);
 }
 
 void motorSturen(bool richting)
