@@ -27,8 +27,8 @@
 // Library voor LCD
 LiquidCrystal_I2C lcd(0x27, 16, 2); // adres 0x27, 16 kolommen, 2 rijen
 
-// Zorgt ervoor dat "Klik op RESET" maar 1 keer wordt geprint
-bool resetBericht;
+// Zorgt ervoor dat "Klik op RESET" maar 1 keer om de 5 seconden wordt geprint
+unsigned long resetTijd;
 
 void setup()
 {
@@ -53,14 +53,17 @@ void setup()
 
 void loop()
 {
+    // Controleren dat de plank op de startpositie staat, anders vragen om te resetten
     if (digitalRead(SWITCH1PIN))
     {
         displayOnLcd("Druk op START");
-        resetBericht = false;
+
+        // Wachten tot de startknop wordt ingedrukt
+        resetTijd = 0;
         while (!start);
         displayOnLcd("START gedrukt");
         traagOmhoog();
-        while (start && !sensor1 && !switch2) {}
+        while (start && !sensor1 && !switch2);
         stop();
 
         if (start && !switch2)
@@ -76,11 +79,14 @@ void loop()
             delay(5000);
         }
     }
-    else if (!resetBericht)
+
+    // Zorgen dat "Klik op RESET" maar om de 5 seconden wordt geprint
+    else if (millis() - resetTijd > 5000)
     {
-        resetBericht = true;
+        resetTijd = millis();
         displayOnLcd("Klik op RESET");
     }
+
     else if (reset)
     {
         resetFunc();
